@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+
+<launch>
+    <node pkg="data2bag" type="data2bag_node" name="csv_data2rosbag" output="screen" required="true">
+        <param name="csv_path" type="string" value="/media/wangzb/Seagate Drive/dataset/BIT/2022-1-22/3/" > </param>
+        <param name="bag_path" type="string" value="/home/wangzb/Documents/data2bag_ros/src/data2bag/data/bit.bag" ></param>
+        <param name="b_oxts" type="bool" value="1"></param>
+        <param name="b_hdl" type="bool" value="1"></param>
+        <param name="b_zedImage" type="bool" value="1"></param>
+        <param name="b_zedImu" type="bool" value="1"></param>
+        <param name="oxts_dataNum" type="int" value="2" ></param>
+        <param name="hdl_dataNum" type="int" value="27" ></param>
+        <param name="zed_imageNum" type="int" value="7510" ></param>
+        <param name="zed_imuNum" type="int" value="5" ></param>
+    </node>
+
+</launch>

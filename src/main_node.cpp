@@ -533,8 +533,26 @@ int main(int argc, char** argv)
 {
     ros::init(argc,argv,"multi_data");
     ros::NodeHandle nh("~");
+	string csv_path;//csv
+    nh.param<std::string>("csv_path",csv_path,"");
+    string bag_path;
+    nh.param<std::string>("bag_path", bag_path, "");
+    bool bOxts, bHdl, bZedImage, bZedImu;
+    nh.param<bool>("b_oxts", bOxts, 0);
+    nh.param<bool>("b_hdl", bHdl, 0);
+    nh.param<bool>("b_zedImage", bZedImage, 0);
+    nh.param<bool>("b_zedImu", bZedImu, 0);
+    int oxts_dataNum, hdl_dataNum, zed_imageNum, zed_imuNum;
+    nh.param<int>("oxts_dataNum", oxts_dataNum,1);
+    nh.param<int>("hdl_dataNum", hdl_dataNum,1);
+    nh.param<int>("zed_imageNum", zed_imageNum,1);
+    nh.param<int>("zed_imuNum", zed_imuNum,1);
 
     //for test
+	//    ROS_INFO("%s",csv_path.c_str());
+//    ROS_INFO("%s",bag_path.c_str());
+//    ROS_INFO("%d, %d, %d, %d", bOxts, bHdl, bZedImage, bZedImu);
+//    ROS_INFO("%d, %d, %d, %d", oxts_dataNum, hdl_dataNum, zed_imageNum, zed_imuNum);
     /*ros::Subscriber cloud_sub = nh.subscribe<sensor_msgs::PointCloud2>("/kitti/velo/pointcloud",
             1,&msg_callback);
     ros::Rate rate(10);
@@ -545,33 +563,44 @@ int main(int argc, char** argv)
     }
     return 0;*/
     rosbag::Bag bag;
-    bag.open("/home/wangzb/Documents/data2bag_ros/src/data2bag/data/bit.bag",rosbag::bagmode::Write);
+    bag.open(bag_path,rosbag::bagmode::Write);
     bool success = true;
 
-    string path = "/media/wangzb/Seagate Drive/dataset/BIT/2022-1-22/3/";
-
-    //OXTS
-    ROS_INFO("OXTS data is writing!");
-    success = OXTS_data2bag(bag, path, 2);
-    if(!success)
-        std::cout<<"OXTS data failed!\n";
+	//OXTS
+    if (bOxts)
+    {
+        ROS_INFO("OXTS data is writing!");
+        success = OXTS_data2bag(bag, csv_path, oxts_dataNum);
+        if(!success)
+            std::cout<<"OXTS data failed!\n";
+    }
     //HDL
-    ROS_INFO("HDL data is writing!");
-    success = HDL_data2bag(bag, path, 27);
-    if(!success)
-        std::cout<<"HDL data failed!\n";
+    if (bHdl)
+    {
+        ROS_INFO("HDL data is writing!");
+        success = HDL_data2bag(bag, csv_path, hdl_dataNum);
+        if(!success)
+            std::cout<<"HDL data failed!\n";
+    }
 
     //ZED Image
-    ROS_INFO("ZED Image is writing!");
-    success = ZED_image2bag(bag,path,7510);
-    if(!success)
-        std::cout<<"ZED image failed!\n";
+    if (bZedImage)
+    {
+        ROS_INFO("ZED Image is writing!");
+        success = ZED_image2bag(bag,csv_path,zed_imageNum);
+        if(!success)
+            std::cout<<"ZED image failed!\n";
+    }
 
     //ZED imu
-    ROS_INFO("ZED imu is writing!");
-    success = ZED_imu2bag(bag,path, 5);
-    if(!success)
-        std::cout<<"ZED imu failed!\n";
+    if (bZedImu)
+    {
+        ROS_INFO("ZED imu is writing!");
+        success = ZED_imu2bag(bag,csv_path, zed_imuNum);
+        if(!success)
+            std::cout<<"ZED imu failed!\n";
+    }
     bag.close();
+	return 0;
 
 }
